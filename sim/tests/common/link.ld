@@ -16,7 +16,6 @@ STACK_SIZE = 1024;
 CL_SIZE = 32;
 
 SECTIONS {
-
   /* code segment */
   .text.init 0 : { 
     FILL(0);
@@ -31,6 +30,10 @@ SECTIONS {
     *(.text.init) 
   } >RAM
 
+	.reset 0: {
+		. = 0x1000;
+	} >RAM 
+	
   .text  : {
     *crt.o(.text .text.*)
     *(.text .text.*)

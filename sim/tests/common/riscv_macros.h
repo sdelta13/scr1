@@ -176,19 +176,35 @@ _run_test:
 // Pass/Fail Macro
 //-----------------------------------------------------------------------
 
-#define RVTEST_PASS                                                     \
-        fence;                                                          \
+.section .rodata
+mF:.string "dead\n"
+mT:.string "V\n"
+.section .text
+		
+#define RVTEST_PASS                                                     \      
+		li a6,0xf0000000;												\
+ 		la a2,mT; 														\
+1:		lbu a3,(a2); 													\ 
+		sw a3,0(a6);													\
+		addi a2,a2,1; 													\
+		bnez a3,1b;														\
+		fence;		                                          			\
         mv a1, TESTNUM;                                                 \
         li  a0, 0x0;                                                    \
         ecall
-
 #define TESTNUM x28
-#define RVTEST_FAIL                                                     \
-        fence;                                                          \
+#define RVTEST_FAIL 													\														
+		li a6,0xf0000000;												\
+ 		la a2,mF; 														\
+1:		lbu a3,(a2); 													\ 
+		sw a3,0(a6);													\
+		addi a2,a2,1; 													\
+		bnez a3,1b;														\
+		fence;                                                          \
         mv a1, TESTNUM;                                                 \
         li  a0, 0x1;                                                    \
         ecall
-
+        
 //-----------------------------------------------------------------------
 // Data Section Macro
 //-----------------------------------------------------------------------
@@ -815,5 +831,5 @@ pass: \
 
 #define TEST_DATA
 
-#endif
 
+#endif
